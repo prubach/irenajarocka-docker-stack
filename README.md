@@ -11,7 +11,7 @@ While I use this for development on macOS, you may use this for any platform. To
 
 
 ## Images used:
-- php:8.1-apache
+- php:7.4-apache
 - mysql:latest
 - composer:2
 - phpmyadmin/phpmyadmin:latest
@@ -19,7 +19,7 @@ While I use this for development on macOS, you may use this for any platform. To
 To pre-download the underlying images, use the `docker pull` command:
 
 ```sh
-docker pull php:8.1-apache
+docker pull php:7.4-apache
 docker pull mysql:latest
 docker pull composer:2
 ```
@@ -41,8 +41,8 @@ docker stack rm dev
 
 ## Create named volumes
 ```sh
-docker volume create workspace --opt type=none --opt device=/Users/jasonmccreary/workspace --opt o=bind
-docker volume create data --opt type=none --opt device=/Users/jasonmccreary/data --opt o=bind
+docker volume create workspace --opt type=none --opt device=/Users/pol/irenajarocka.pl/public_html --opt o=bind
+docker volume create data --opt type=none --opt device=/Users/pol/irenajarocka-docker-stack/data/mysql --opt o=bind
 ```
 
 ## Granting the `dbuser` access
@@ -50,7 +50,13 @@ Since the MySQL `data` directory is configured to persist, this only needs to be
 
 
 ```sql
-GRANT ALL PRIVILEGES ON *.* TO 'dbuser'@'%';
+GRANT ALL PRIVILEGES ON *.* TO 'irenajarocka'@'%';
 ```
 
 **Note:** This user has access from any IP to avoid additional network configuration.
+
+
+```
+[mysqld]  
+sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"
+```

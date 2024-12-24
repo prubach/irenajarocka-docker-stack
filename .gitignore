@@ -6,3 +6,5 @@
 /demo/vendor/
 /demo/web/assets/
 /src/vendor/
+secrets
+logs
