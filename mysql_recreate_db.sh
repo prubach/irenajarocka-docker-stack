@@ -33,4 +33,45 @@ backup_database() {
   fi
 }
 
-drop_and_rec
+drop_and_recreate_database() {
+  echo "🧨 Dropping existing database '$DB_NAME' (if exists)..."
+  mysql -u"$DB_USER" -p"$DB_PASS" -e "DROP DATABASE IF EXISTS \`$DB_NAME\`;"
+
+  echo "🆕 Creating new database '$DB_NAME'..."
+  mysql -u"$DB_USER" -p"$DB_PASS" -e "CREATE DATABASE \`$DB_NAME\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+}
+
+import_dump() {
+  echo "📦 Importing data from '$SQL_DUMP'..."
+  mysql -u"$DB_USER" -p"$DB_PASS" "$DB_NAME" < "$SQL_DUMP"
+  echo "✅ Database '$DB_NAME' restored successfully from '$SQL_DUMP'."
+}
+
+# ---- Parse arguments ----
+while getopts "d:u:p:f:" opt; do
+  case "$opt" in
+    d) DB_NAME="$OPTARG" ;;
+    u) DB_USER="$OPTARG" ;;
+    p) DB_PASS="$OPTARG" ;;
+    f) SQL_DUMP="$OPTARG" ;;
+    *) usage ;;
+  esac
+done
+
+if [[ -z "$DB_NAME" || -z "$DB_USER" || -z "$DB_PASS" || -z "$SQL_DUMP" ]]; then
+  usage
+fi
+
+if [[ ! -f "$SQL_DUMP" ]]; then
+  echo "❌ Error: SQL dump file '$SQL_DUMP' not found."
+  exit 1
+fi
+
+# ---- Main process ----
+echo "🚀 Starting restore process for database: $DB_NAME"
+
+backup_database
+drop_and_recreate_database
+import_dump
+
+echo "🎉 All done!"
