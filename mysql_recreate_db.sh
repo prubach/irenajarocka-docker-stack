@@ -22,11 +22,11 @@ usage() {
 
 backup_database() {
   echo "🔹 Checking if database '$DB_NAME' exists for backup..."
-  if mysql -u"$DB_USER" -p"$DB_PASS" -e "USE \`$DB_NAME\`;" 2>/dev/null; then
+  if mysql -u"$DB_USER" -p"$DB_PASS" -h 127.0.0.1 -e "USE \`$DB_NAME\`;" 2>/dev/null; then
     mkdir -p "$BACKUP_DIR"
     BACKUP_FILE="$BACKUP_DIR/${DB_NAME}_backup_$(date +%Y%m%d_%H%M%S).sql"
     echo "💾 Creating backup: $BACKUP_FILE ..."
-    mysqldump -u"$DB_USER" -p"$DB_PASS" "$DB_NAME" > "$BACKUP_FILE"
+    mysqldump -u"$DB_USER" -p"$DB_PASS" -h 127.0.0.1 "$DB_NAME" > "$BACKUP_FILE"
     echo "✅ Backup saved at: $BACKUP_FILE"
   else
     echo "⚠️  Database '$DB_NAME' does not exist — skipping backup."
@@ -35,15 +35,15 @@ backup_database() {
 
 drop_and_recreate_database() {
   echo "🧨 Dropping existing database '$DB_NAME' (if exists)..."
-  mysql -u"$DB_USER" -p"$DB_PASS" -e "DROP DATABASE IF EXISTS \`$DB_NAME\`;"
+  mysql -u"$DB_USER" -p"$DB_PASS" -h 127.0.0.1 -e "DROP DATABASE IF EXISTS \`$DB_NAME\`;"
 
   echo "🆕 Creating new database '$DB_NAME'..."
-  mysql -u"$DB_USER" -p"$DB_PASS" -e "CREATE DATABASE \`$DB_NAME\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+  mysql -u"$DB_USER" -p"$DB_PASS" -h 127.0.0.1 -e "CREATE DATABASE \`$DB_NAME\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 }
 
 import_dump() {
   echo "📦 Importing data from '$SQL_DUMP'..."
-  mysql -u"$DB_USER" -p"$DB_PASS" "$DB_NAME" < "$SQL_DUMP"
+  mysql -u"$DB_USER" -p"$DB_PASS" -h 127.0.0.1 "$DB_NAME" < "$SQL_DUMP"
   echo "✅ Database '$DB_NAME' restored successfully from '$SQL_DUMP'."
 }
 
