@@ -8,3 +8,4 @@
 /src/vendor/
 secrets
 logs
+.credentials

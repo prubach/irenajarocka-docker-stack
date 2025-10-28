@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 LOG_DIR=${LOCAL_STACK}/logs/
 CUR_DATE=`date "+%Y-%m-%d";`
-DUMP_FILE=irenajarocka_dump_${CUR_DATE}.sql
-mysqldump --defaults-file=/home/irenajarocka/.my.cnf –u irenajarocka irenajarocka > irenajarocka.sql
+DUMP_FILE=$1
+CREDENTIALS=/home/irenajarocka/.my.cnf
+mysqldump --defaults-file= –u irenajarocka irenajarocka > $1
